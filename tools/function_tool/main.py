@@ -1,4 +1,3 @@
-import os
 import typer
 from typing_extensions import Annotated
 
@@ -16,6 +15,7 @@ def test_123(
     optional_str: Annotated[str, typer.Argument()] = "sheeesh",  # This is how to add a default value
 ):
     import pandas as pd
+    import os
 
     print(f"Hello {name}! Secret: {os.environ.get('TEST_SECRET', 'no secret')}. {boolean_val} {optional_str}")
     df = pd.DataFrame({"name": [name], "boolean_val": [boolean_val], "test": [optional_str]})

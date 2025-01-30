@@ -48,7 +48,7 @@
         {
           "source": null,
           "destination": "/tmp/main.py",
-          "content": "\nfrom typing import Annotated\n\nimport typer\n\napp = typer.Typer(rich_markup_mode=None, add_completion=False)\n\ndef test_123(\n    name: str,\n    boolean_val: bool,  # This will validate that the input is a boolean\n    optional_str: Annotated[str, typer.Argument()] = \"sheeesh\",  # This is how to add a default value\n):\n    import pandas as pd\n\n    print(f\"Hello {name}! Secret: {os.environ.get('TEST_SECRET', 'no secret')}. {boolean_val} {optional_str}\")\n    df = pd.DataFrame({\"name\": [name], \"boolean_val\": [boolean_val], \"test\": [optional_str]})\n\n    print(df)\n\n\napp.command()(test_123)\n\nif __name__ == \"__main__\":\n    app()\n"
+          "content": "\nfrom typing import Annotated\n\nimport typer\n\napp = typer.Typer(rich_markup_mode=None, add_completion=False)\n\ndef test_123(\n    name: str,\n    boolean_val: bool,  # This will validate that the input is a boolean\n    optional_str: Annotated[str, typer.Argument()] = \"sheeesh\",  # This is how to add a default value\n):\n    import pandas as pd\n    import os\n\n    print(f\"Hello {name}! Secret: {os.environ.get('TEST_SECRET', 'no secret')}. {boolean_val} {optional_str}\")\n    df = pd.DataFrame({\"name\": [name], \"boolean_val\": [boolean_val], \"test\": [optional_str]})\n\n    print(df)\n\n\napp.command()(test_123)\n\nif __name__ == \"__main__\":\n    app()\n"
         }
       ],
       "with_services": [],
