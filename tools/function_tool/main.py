@@ -1,7 +1,6 @@
 import typer
-from typing_extensions import Annotated
-
 from kubiya_sdk.tools import function_tool
+from typing_extensions import Annotated
 
 
 @function_tool(
@@ -32,51 +31,65 @@ def test_123(
 def get_instenv_logs(
     environment_id: str,
     run_id: Annotated[str, typer.Argument()] = None,
+    number_of_last_lines_from_log: Annotated[int, typer.Argument()] = 100,
 ):
     import requests
     import os
 
-    env_url = f"https://prod.instenv-ui.internal.atlassian.com/api/v2/environments/{environment_id}"
-    headers = {
-        'Authorization': f"Bearer {os.environ.get('INSTENV_API_TOKEN')}"
-    }
+    class InstEnvHelper:
+        __API_URL = "https://prod.instenv-ui.internal.atlassian.com/api/v2"
+        __env_configurations = None
 
-    configuration_response = requests.get(
-        env_url,
-        headers=headers
-    )
-    if configuration_response.status_code != 200:
-        print(f"Failed to get configuration for environment {environment_id}")
-        return
+        def __init__(self, env_id: str, env_run_id:str=None):
+            self.environment_id = env_id
+            self.run_id = env_run_id
+            self.headers = {
+                'Authorization': f"Bearer {os.environ.get('INSTENV_API_TOKEN')}"
+            }
 
-    configuration = configuration_response.json()
+        def __make_request(self, endpoint: str, method: str = "GET"):
+            url = f"{self.__API_URL}/{endpoint}"
+            response = requests.request(
+                method,
+                url,
+                headers=self.headers
+            )
+            return response
 
-    # Get the latest failed run id
-    failed_run_id = run_id
-    if failed_run_id is None:
-        for run in configuration["runs"]:
-            if run.get("status") in ["failed", "running-failed"]:
-                failed_run_id = run.get("id")
-                break
+        def get_environment_configuration(self):
+            response = self.__make_request(f"/environments/{self.environment_id}")
+            self.__env_configurations = response.json()
+            return self.__env_configurations
 
-    if failed_run_id is None:
-        print(f"No failed runs found for environment {environment_id}")
-        return
+        def get_last_failed_run_id(self):
+            if self.run_id:
+                return self.run_id
 
-    # Get the logs for the failed run
-    logs_url = (f"https://prod.instenv-ui.internal.atlassian.com/api"
-                f"/v2/environments/{environment_id}/runs/{failed_run_id}/logs")
-    logs_response = requests.get(
-        logs_url,
-        headers=headers
-    )
-    if logs_response.status_code != 200:
-        print(f"Failed to get logs for run {failed_run_id}")
-        return
+            if not self.__env_configurations:
+                self.get_environment_configuration()
 
-    logs = logs_response.text.replace("\\n", "\n")
-    # Get the last 100 lines of logs
-    print("\n".join(logs.split("\n")[-100:]))
+            for run in self.__env_configurations.get("runs", []):
+                if run.get("status") in ["failed", "running-failed"]:
+                    return run.get("id")
+            return None
+
+        def get_run_logs(self, last_lines: int = 100):
+            failed_run_id = self.get_last_failed_run_id()
+            response = self.__make_request(
+                f"/environments/{self.environment_id}/runs/{failed_run_id}/logs"
+            )
+            if response.status_code != 200:
+                return (f"Failed to get logs for run {failed_run_id}. Status code: {response.status_code}."
+                        f"Response: {response.text}")
+
+            return "\n".join(response.text.replace("\\n", "\n").split("\n")[-last_lines:])
+
+
+    instenv = InstEnvHelper(environment_id, run_id)
+    last_logs = instenv.get_run_logs(number_of_last_lines_from_log)
+
+    print(last_logs)
+
 
 if __name__ == "__main__":
     typer.run(get_instenv_logs)
