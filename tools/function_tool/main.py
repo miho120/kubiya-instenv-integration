@@ -31,6 +31,7 @@ def test_123(
 )
 def get_instenv_logs(
     environment_id: str,
+    run_id: Annotated[str, typer.Argument()] = None,
 ):
     import requests
     import os
@@ -51,11 +52,12 @@ def get_instenv_logs(
     configuration = configuration_response.json()
 
     # Get the latest failed run id
-    failed_run_id = None
-    for run in configuration["runs"]:
-        if run.get("status") in ["failed", "running-failed"]:
-            failed_run_id = run.get("id")
-            break
+    failed_run_id = run_id
+    if failed_run_id is None:
+        for run in configuration["runs"]:
+            if run.get("status") in ["failed", "running-failed"]:
+                failed_run_id = run.get("id")
+                break
 
     if failed_run_id is None:
         print(f"No failed runs found for environment {environment_id}")
