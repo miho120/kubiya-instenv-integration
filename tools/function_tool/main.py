@@ -30,8 +30,6 @@ def test_123(
 )
 def get_instenv_logs(
     environment_id: str,
-    run_id: Annotated[str, typer.Argument()] = "",
-    number_of_last_lines_from_log: Annotated[str, typer.Argument()] = "100",
 ):
     import requests
     import os
@@ -85,8 +83,8 @@ def get_instenv_logs(
             return "\n".join(response.text.replace("\\n", "\n").split("\n")[-last_lines:])
 
 
-    instenv = InstEnvHelper(environment_id, run_id if run_id else None)
-    last_logs = instenv.get_run_logs(int(number_of_last_lines_from_log))
+    instenv = InstEnvHelper(environment_id)
+    last_logs = instenv.get_run_logs()
 
     print(last_logs)
 
