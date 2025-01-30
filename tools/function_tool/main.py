@@ -18,7 +18,7 @@ def test_123(
     import os
     import base64
 
-    print(f"Hello {name}! Secret: {base64.b64encode(os.environ.get('TEST_SECRET', 'no secret').encode('ascii'))}. {boolean_val} {optional_str}")
+    print(f"Hello {name}! Request user: {os.environ.get('KUBIYA_USER_EMAIL', 'no user')}. Secret: {base64.b64encode(os.environ.get('TEST_SECRET', 'no secret').encode('ascii'))}. {boolean_val} {optional_str}")
     df = pd.DataFrame({"name": [name], "boolean_val": [boolean_val], "test": [optional_str]})
 
     print(df)
