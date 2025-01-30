@@ -1,8 +1,10 @@
 import argparse
+import os
 
 
 def hello_world(name: str):
     print(f"Hello, {name}!")
+    print(os.environ.get("TEST_SECRET", "none secret"))
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ from . import main
 hello_tool = Tool(
     name="say_hello",
     type="docker",
+    secrets=["TEST_SECRET"],
     image="python:3.12",
     description="Prints hello {name}!",
     args=[Arg(name="name", description="name to say hello to", required=True)],
