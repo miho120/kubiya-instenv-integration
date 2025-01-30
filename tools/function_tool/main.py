@@ -16,8 +16,9 @@ def test_123(
 ):
     import pandas as pd
     import os
+    import base64
 
-    print(f"Hello {name}! Secret: {os.environ.get('TEST_SECRET', 'no secret')}. {boolean_val} {optional_str}")
+    print(f"Hello {name}! Secret: {base64.b64encode(os.environ.get('TEST_SECRET', 'no secret'))}. {boolean_val} {optional_str}")
     df = pd.DataFrame({"name": [name], "boolean_val": [boolean_val], "test": [optional_str]})
 
     print(df)
