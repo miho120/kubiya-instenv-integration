@@ -31,7 +31,7 @@ def test_123(
 def get_instenv_logs(
     environment_id: str,
     run_id: Annotated[str, typer.Argument()] = None,
-    number_of_last_lines_from_log: Annotated[int, typer.Argument()] = 100,
+    number_of_last_lines_from_log: Annotated[str, typer.Argument()] = "100",
 ):
     import requests
     import os
@@ -86,7 +86,7 @@ def get_instenv_logs(
 
 
     instenv = InstEnvHelper(environment_id, run_id)
-    last_logs = instenv.get_run_logs(number_of_last_lines_from_log)
+    last_logs = instenv.get_run_logs(int(number_of_last_lines_from_log))
 
     print(last_logs)
 
