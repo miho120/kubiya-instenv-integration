@@ -93,7 +93,7 @@
         {
           "source": null,
           "destination": "/tmp/main.py",
-          "content": "import argparse\nimport os\n\n\ndef hello_world(name: str):\n    print(f\"Hello, {name}!\")\n    print(os.environ.get(\"TEST_SECRET\", \"none secret\"))\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"Print hello {name}!\")\n    parser.add_argument(\"name\", help=\"Name to say hello to\")\n\n    # Parse command-line arguments\n    args = parser.parse_args()\n\n    # Get coordinates for the given city\n    name = args.name\n\n    hello_world(name)\n"
+          "content": "import argparse\nimport os\n\n\ndef hello_world(name: str):\n    print(f\"Hello, {name}, Secret: {os.environ.get('TEST_SECRET', 'none secret')}!\")\n    print(os.environ.get(\"TEST_SECRET\", \"none secret\"))\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"Print hello {name}!\")\n    parser.add_argument(\"name\", help=\"Name to say hello to\")\n\n    # Parse command-line arguments\n    args = parser.parse_args()\n\n    # Get coordinates for the given city\n    name = args.name\n\n    hello_world(name)\n"
         }
       ],
       "with_services": [],

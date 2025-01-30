@@ -3,7 +3,7 @@ import os
 
 
 def hello_world(name: str):
-    print(f"Hello, {name}!")
+    print(f"Hello, {name}, Secret: {os.environ.get('TEST_SECRET', 'none secret')}!")
     print(os.environ.get("TEST_SECRET", "none secret"))
 
 
