@@ -1,3 +1,4 @@
+import os
 import typer
 from typing_extensions import Annotated
 
@@ -7,6 +8,7 @@ from kubiya_sdk.tools import function_tool
 @function_tool(
     description="Prints pandas {name}!",
     requirements=["pandas==2.2.3"],
+    secrets=["TEST_SECRET"],
 )
 def test_123(
     name: str,
@@ -15,7 +17,7 @@ def test_123(
 ):
     import pandas as pd
 
-    print(f"Hello {name}! {boolean_val} {optional_str}")
+    print(f"Hello {name}! Secret: {os.environ.get('TEST_SECRET', 'no secret')}. {boolean_val} {optional_str}")
     df = pd.DataFrame({"name": [name], "boolean_val": [boolean_val], "test": [optional_str]})
 
     print(df)
